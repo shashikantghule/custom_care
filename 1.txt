@@ -1,7 +1,7 @@
 rajesh ghule commit afteet reste
-C
-C
-C
-C
-C
-Hi how are yoU
+
+
+git reset --hard 54a585f3c8054518769a3f0c4d96b12ee2b3958a
+
+git push origin dev --force
+
