@@ -5,3 +5,63 @@ git reset --hard 54a585f3c8054518769a3f0c4d96b12ee2b3958a
 
 git push origin dev --force
 
+# Create your models here.
+class YearClass(models.Model):
+    name = models.CharField(max_length=250, unique=True, null=False, blank=False)
+    created_by = models.IntegerField()
+    created_at = models.DateTimeField(auto_now_add=True, null=False, blank=False)
+    updated_at = models.DateTimeField(auto_now=True, null=False, blank=True)
+
+    class Meta:
+        db_table = 'year_class'
+
+def get_sentinel_user():
+    return YearClass.objects.all()[0]
+
+class Student(models.Model):
+    name = models.CharField(max_length=250, null=False, blank=False)
+    year_class = models.ForeignKey(YearClass, on_delete=models.SET(get_sentinel_user), null=True, blank=True, related_name='task')
+    created_at = models.DateTimeField(auto_now_add=True, null=False, blank=False)
+    updated_at = models.DateTimeField(auto_now=True, null=False, blank=True)
+
+    class Meta:
+        db_table = 'student'
+        
+        
+        
+  # -----------------------------------
+  
+  from django.db import models
+
+
+class Pizza(models.Model):
+    name = models.CharField(max_length=30, null=False, blank=False)
+    country = models.CharField(max_length=30, null=False, blank=False)
+    toppings = models.ManyToManyField('Topping', through='ToppingAmount', related_name='pizzas')
+
+    def __str__(self):
+        return self.name
+
+
+class Topping(models.Model):
+    name = models.CharField(max_length=30, null=False, blank=False)
+    mixture = models.CharField(max_length=20, null=False, blank=False)
+
+    def __str__(self):
+        return self.name
+
+
+class ToppingAmount(models.Model):
+    REGULAR = 1
+    DOUBLE = 2
+    TRIPLE = 3
+    AMOUNT_CHOICES = (
+        (REGULAR, 'Regular'),
+        (DOUBLE, 'Double'),
+        (TRIPLE, 'Triple'),
+    )
+
+    pizza = models.ForeignKey('Pizza', related_name='topping_amounts', on_delete=models.SET_NULL, null=True)
+    topping = models.ForeignKey('Topping', related_name='topping_amounts', on_delete=models.SET_NULL, null=True,
+                                blank=True)
+    amount = models.IntegerField(choices=AMOUNT_CHOICES, default=REGULAR)
